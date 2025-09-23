@@ -1,24 +1,48 @@
-﻿# Python
+﻿# ── Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
 *.pyd
+*.so
+*.dylib
 *.egg-info/
-.venv/
-.env
-.ipynb_checkpoints/
+.eggs/
+build/
+dist/
 
-# IDE
+# ── Virtual Envs / Env-Dateien
+.venv/
+venv/
+.env
+.env.*
+
+# ── IDE / Editor
 .vscode/
 .idea/
+*.code-workspace
 
-# Daten/Outputs
-data/
-reports/
-figures/
-*.csv
-*.html
+# ── Jupyter (falls mal Notebooks benutzt werden)
+.ipynb_checkpoints/
+*.ipynb
 
-# OS
+# ── OS / OneDrive
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# ── Projekt-spezifisch (Artefakte & Reports)
+out/
+reports/
+report.html
+series.csv
+*.png
+*.html
+*.svg
+
+# ── Daten (Rohdaten NICHT versionieren)
+data/**
+!data/.gitkeep   # Ordner behalten, aber leer
+
+# ── Tests / Tools (optional)
+.pytest_cache/
+.coverage
+htmlcov/

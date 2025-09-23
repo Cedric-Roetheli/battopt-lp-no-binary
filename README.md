@@ -12,7 +12,11 @@ pip install -r requirements.txt
 
 ## Run
 ```bash
-python -m battopt_lp.cli.optimize_year       --config configs/site_timeseries.yaml       --report-html reports/site_2024_opt.html       --series-csv reports/site_2024_opt.csv
+python -m battopt_lp.cli.optimize_year `
+  --config configs/site_timeseries.yaml `
+  --report-html out/report.html `
+  --series-csv out/series.csv `
+  --solver CBC
 ```
 
 ## YAML (Beispiel)

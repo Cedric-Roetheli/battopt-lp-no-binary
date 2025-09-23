@@ -1,8 +1,9 @@
-pulp>=2.8.0
-highspy>=1.7.0
-pandas>=2.0.0
-numpy>=1.23.0
+pulp>=2.8
+pandas>=2.2
+numpy>=1.26
 PyYAML>=6.0
-typer>=0.9.0
-
+typer>=0.12
 matplotlib>=3.8
+
+# Optional: nur wenn ihr HiGHS per Python-Package wollt
+# highspy>=1.7.0
