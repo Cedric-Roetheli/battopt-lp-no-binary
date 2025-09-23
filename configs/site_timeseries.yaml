@@ -1,0 +1,38 @@
+timeseries:
+  consumption_csv: data/2024_Gesamtverbrauch_HIHO_python.csv
+  pv_csv:          data/2024_PV-Produktion_HIHO_python.csv
+  step_seconds:    900
+  start_datetime:  "2024-01-01T00:00:00"
+  tz:              "Europe/Zurich"
+
+energy_prices:
+  import_chf_per_kWh: 0.19
+  grid_chf_per_kWh:   0.19
+  feed_in_chf_per_kWh: 0.06
+
+demand_tariff:
+  enabled: true
+  basis: monthly
+  charge_chf_per_kW: 12.0
+  allow_grid_charging: true
+
+storage:
+  simulate:
+    capacity_kwh:   64
+    p_charge_kw:    30
+    p_discharge_kw: 30
+    roundtrip_eff:  0.92
+    soc_min:        0.15
+    soc_max:        0.95
+    soc0:           0.50
+
+remuneration:
+  paid_feed_in_cap_kW: 30.0
+
+economics:
+  capex_battery_chf:       32000
+  capex_installation_chf:   2000
+  opex_annual_chf:             0
+  lifetime_years:             15
+  discount_rate_pct:           2
+  subsidy_upfront_chf:         0
