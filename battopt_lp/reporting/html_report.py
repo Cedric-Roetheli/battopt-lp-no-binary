@@ -197,7 +197,7 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
     # EVQ
     fig, ax = plt.subplots(figsize=(5.4,3.2))
     ax.bar([0,1],[evq_before, evq_after])
-    ax.set_xticks([0,1], ["Vor Speicher", "Nach Speicher"])
+    ax.set_xticks([0,1], ["ohne Batterie", "mit Batterie"])
     ax.set_ylabel("Eigenverbrauchsquote [%]")
     ax.grid(True, axis="y", linestyle="--", alpha=0.5)
     images["evq"] = _b64(fig)
@@ -205,7 +205,7 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
     # Autarkie
     fig, ax = plt.subplots(figsize=(5.4,3.2))
     ax.bar([0,1],[autark_before, autark_after])
-    ax.set_xticks([0,1], ["Vor Speicher", "Nach Speicher"])
+    ax.set_xticks([0,1], ["ohne Batterie", "mit Batterie"])
     ax.set_ylabel("Autarkie [%]")
     ax.grid(True, axis="y", linestyle="--", alpha=0.5)
     images["autarkie"] = _b64(fig)
@@ -213,8 +213,8 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
     # Peaks monthly
     fig, ax = plt.subplots(figsize=(5.4,3.2))
     x = np.arange(len(m_before_kw)); width = 0.38
-    ax.bar(x-width/2, m_before_kw.values, width, label="Vor")
-    ax.bar(x+width/2, m_after_kw.values, width, label="Nach")
+    ax.bar(x-width/2, m_before_kw.values, width, label="ohne Batterie")
+    ax.bar(x+width/2, m_after_kw.values, width, label="mit Batterie")
     ax.set_xticks(x, [str(p) for p in m_before_kw.index], rotation=45, ha="right")
     ax.set_ylabel("Monats-Peak [kW]")
     ax.legend()
@@ -229,8 +229,8 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
     kw_after_series  = (imp_after_series.clip(lower=0)/step_hours)
     a = np.sort(kw_before_series.values); b = np.sort(kw_after_series.values)
     fig, ax = plt.subplots(figsize=(5.4,3.2))
-    ax.plot(np.linspace(0,100,len(a)), a, label="Vor")
-    ax.plot(np.linspace(0,100,len(b)), b, label="Nach")
+    ax.plot(np.linspace(0,100,len(a)), a, label="ohne Batterie")
+    ax.plot(np.linspace(0,100,len(b)), b, label="mit Batterie")
     ax.set_xlabel("Prozent der Zeit [%]")
     ax.set_ylabel("Netto-Last [kW]")
     ax.grid(True, linestyle="--", alpha=0.5)
@@ -265,10 +265,10 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
     imp_m_before = ((cons - pv).clip(lower=0)).groupby(mkey).sum()
     fig, ax = plt.subplots(figsize=(5.4,3.2))
     x = np.arange(len(imp_m_before)); width = 0.38
-    ax.bar(x-width/2, imp_m_before.values, width, label="Vor")
-    ax.bar(x+width/2, imp_m_after.reindex(imp_m_before.index).values, width, label="Nach")
+    ax.bar(x-width/2, imp_m_before.values, width, label="ohne Batterie")
+    ax.bar(x+width/2, imp_m_after.reindex(imp_m_before.index).values, width, label="mit Batterie")
     ax.set_xticks(x, imp_m_before.index.astype(str).tolist(), rotation=45, ha="right")
-    ax.set_ylabel("Import [kWh / Monat]")
+    ax.set_ylabel("Netzbezug [kWh / Monat]")
     ax.legend()
     ax.grid(True, axis="y", linestyle="--", alpha=0.5)
     images["import_monthly"] = _b64(fig)
@@ -334,8 +334,18 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
         bef = ((cons - pv).clip(lower=0)/step_hours).loc[mask].groupby(s.dt.floor("D")).max()
         aft = (imp_after_series.clip(lower=0)/step_hours).loc[mask].groupby(s.dt.floor("D")).max()
         fig, ax = plt.subplots(figsize=(5.4,3.2))
-        ax.plot(bef.index, bef.values, label="Vor")
-        ax.plot(aft.index, aft.values, label="Nach")
+        # ~120 Marker pro Quartal (bei sehr vielen Tagen sonst zu dicht)
+        n = len(bef)
+        mev = max(1, n // 120)
+
+        ax.plot(
+            bef.index, bef.values, label="ohne Batterie",
+            marker=".", markersize=2.5, linewidth=0.8, markevery=mev
+        )
+        ax.plot(
+            aft.index, aft.values, label="mit Batterie",
+            marker=".", markersize=2.5, linewidth=0.8, markevery=mev
+        )
         ax.xaxis.set_major_locator(mdates.MonthLocator())                  # 1 Tick pro Monat
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))        # z.B. 2024-01
         for lbl in ax.get_xticklabels():
@@ -343,7 +353,7 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
             lbl.set_ha("right")
         ax.margins(x=0.01)
         ax.set_ylabel("kW (Tagesmax)")
-        ax.set_title(f"Lastverlauf vor/nach – {qname}")
+        ax.set_title(f"Tagespeaks ohne/mit Batterie – {qname}")
         ax.grid(True, linestyle="--", alpha=0.4)
         ax.legend()
         images[f"quarter_{qname}"] = _b64(fig)
@@ -376,7 +386,7 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
 
     </style>
     """
-    html = [css, "<h1>Speicher-Optimierung – Ergebnisreport</h1>"]
+    html = [css, "<h1>Speicher-Optimierung – EV & LSK Ergebnisreport</h1>"]
 
     econ_cards = [
         card("Capex Batterie", f"{_safe_float(econ.get('capex_battery_chf',0)):,.0f}", " CHF"),
@@ -427,7 +437,7 @@ def generate_html_report_lp(out, df, step_hours, out_path, cfg=None):
     html += ['</div></div>']
 
 
-    html += ['<div class="section"><h2>Lastverlauf pro Quartal (Tagesmax, vor/nach)</h2><div class="twocol">',
+    html += ['<div class="section"><h2>Lastverlauf pro Quartal (Tagesmax, ohne/mit Batterie)</h2><div class="twocol">',
              f'<figure><img src="data:image/png;base64,{images["quarter_Q1"]}"><figcaption>Q1</figcaption></figure>',
              f'<figure><img src="data:image/png;base64,{images["quarter_Q2"]}"><figcaption>Q2</figcaption></figure>',
              '</div></div>']
