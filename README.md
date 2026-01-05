@@ -1,4 +1,4 @@
-# Option 4 – Battery LP Optimizer (EV + Peak Shaving)
+# Battery LP Optimizer (EV + Peak Shaving)
 
 Jahres-LP (linear, ohne Binärvariablen) zur gleichzeitigen Optimierung von Eigenverbrauch, Peak Shaving (Demand Charges) und Einspeisevergütung mit Cap.
 
