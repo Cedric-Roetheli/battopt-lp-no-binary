@@ -494,7 +494,7 @@ python -m battopt_lp.cli.optimize_year \
 2.	Feature-Branch
 3.	PR mit kurzer Beschreibung + Beispielrun (Report/CSV)
 
-
+Alternativ: direkt auf den main origin pushen
 
 
 ---
