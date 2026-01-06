@@ -16,11 +16,10 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 - [Motivation & Zielsetzung](#motivation--zielsetzung)
 - [Was bedeutet „LP ohne Binärvariablen“?](#was-bedeutet-lp-ohne-binärvariablen)
 - [Funktionsumfang](#funktionsumfang)
-- [Nicht-Ziele & bekannte Einschränkungen](#nicht-ziele--bekannte-einschränkungen)
 - [Projektstruktur](#projektstruktur)
 - [Installation](#installation)
 - [Quickstart](#quickstart)
-- [CLI: `battopt_lp.cli.optimize_year`](#cli-battopt_lpclioptimize_year)
+- [CLIENT](#cli)
 - [Konfiguration (YAML)](#konfiguration-yaml)
   - [1) Überblick](#1-überblick)
   - [2) Zeitreihen-Format](#2-zeitreihen-format)
@@ -39,10 +38,7 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 - [Tipps zur Datenqualität](#tipps-zur-datenqualität)
 - [Performance & Skalierung](#performance--skalierung)
 - [Reproduzierbarkeit](#reproduzierbarkeit)
-- [Troubleshooting](#troubleshooting)
 - [Entwicklung](#entwicklung)
-- [Contributing](#contributing)
-- [Lizenz](#lizenz)
 
 ---
 
