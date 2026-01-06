@@ -35,6 +35,7 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 - [Tipps zur Datenqualität](#tipps-zur-datenqualität)
 - [Performance & Skalierung](#performance--skalierung)
 - [Reproduzierbarkeit](#reproduzierbarkeit)
+- [eniwa_EV_LSK_tool_v4_onefile.exe](#eniwa_EV_LSK_tool_v4_onefile.exe)
 - [Entwicklung](#entwicklung)
 
 ---
@@ -283,7 +284,7 @@ Allgemeine Hinweise:
 
 
 Das folgende ist eine konzeptuelle Beschreibung des LP-Modells. Die konkrete Implementierung kann je nach Repo-Stand leicht variieren.
-
+! Variabeln können im Code anders benannt sein !
 
 ---
 
@@ -498,6 +499,19 @@ python -m battopt_lp.cli.optimize_year \
 
 ---
 
+
+
+## eniwa_EV_LSK_tool_v4_onefile.exe
+
+Das Programm eniwa_EV_LSK_tool_v4_onefile.exe basiert auf exakt diesem python programm (battopt-lp-no-binary).
+Es wurde mit streamlit (https://streamlit.io/) erstellt. Für die Wiederholung einer Implementation mit Streamlit sind zusätzliche Schritte nötig.
+Alle nötigen Schritte, files und packages sind auf der streamlit website dokumentiert. beide Programme haben dieselbe Funktionalität und Logik.
+Einzig die Benutzeroberfläche verändert sich.
+
+
+
+
+---
 
 
 ## Kurzfassung (für „Ich will nur laufen lassen“)
