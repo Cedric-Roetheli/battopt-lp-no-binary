@@ -50,28 +50,24 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 
 Energie-Optimierung im Gebäude-/Site-Kontext hat typischerweise mehrere (teils konkurrierende) Ziele:
 
-1. **Kosten minimieren:** Netzbezug reduzieren (Eigenverbrauch erhöhen) und Lastspitzen vermeiden (Demand Charges).
-2. **Erlöse maximieren:** Einspeisung kann vergütet werden – jedoch oft mit **Cap** (z. B. ab einer gewissen Einspeiseleistung oder Energiemenge sinkt/endet die Vergütung).
-3. **Technische Restriktionen einhalten:** Batteriekapazität, Lade-/Entladeleistung, Wirkungsgrade, SOC-Grenzen, ggf. Netzanschlusslimit.
+1. **Kosten minimieren:** Netzbezug reduzieren (Eigenverbrauch erhöhen)
+2. **Lastspitzen vermeiden** (Demand Charges).
+3. **Erlöse maximieren:** Einspeisung kann vergütet werden – jedoch oft mit **Cap** (z. B. ab einer gewissen Einspeiseleistung oder Energiemenge sinkt/endet die Vergütung).
+4. **Technische Restriktionen einhalten:** Batteriekapazität, Lade-/Entladeleistung, Wirkungsgrade, SOC-Grenzen, ggf. Netzanschlusslimit.
 
-Dieses Projekt richtet sich auf einen **Jahreshorizont** (oder allgemein lange Zeitreihen) und nutzt ein **lineares Programm (LP)**, um eine global konsistente Lösung über den gesamten Zeitraum zu finden. 
+Dieses Projekt richtet sich auf einen Jahreshorizont (oder allgemein lange Zeitreihen) und nutzt ein lineares Programm (LP), um eine global konsistente Lösung über den gesamten Zeitraum zu finden. 
+
 ---
 
 ## Was bedeutet „LP ohne Binärvariablen“?
 
-Viele Batteriemodelle verwenden Binärvariablen, um z. B. **gleichzeitiges Laden und Entladen** strikt zu verhindern (`charge_on ∈ {0,1}` etc.). Das macht das Problem zu einem **MIP/MILP** und kann bei Jahreshorizonten (viele Zeitschritte!) schnell teuer werden.
+Viele Batteriemodelle verwenden Binärvariablen, um z. B. **gleichzeitiges Laden und Entladen** strikt zu verhindern (`charge_on ∈ {0,1}` etc.). Das macht das Problem zu einem **MIP/MILP** und kann bei Jahreshorizonten (viele Zeitschritte!) schnell sehr langsam werden.
 
 Dieses Projekt bleibt bewusst bei einem **LP**:
 - schnellere Solve-Zeiten
 - bessere Skalierbarkeit (365 Tage × 96 Viertelstunden = 35’040 Schritte)
 - robust auf frei verfügbaren Solvern (z. B. CBC)
 
-**Wichtig:** Ohne Binärvariablen muss man modellseitig damit umgehen, dass „Charge“ und „Discharge“ theoretisch gleichzeitig positiv werden könnten. Typische LP-Strategien (je nach Implementierung) sind:
-- geringe zusätzliche Kosten/Verluste, die simultane Flüsse unattraktiv machen
-- saubere Wirkungsgradmodellierung
-- optionale Regularisierung (z. B. kleine Strafkosten auf Summe der Batterieflüsse)
-
-> Praxistipp: Wenn du in Ergebnissen unerwartet gleichzeitiges Laden/Entladen siehst, ist das meist ein Hinweis auf (a) zu geringe Verlust-/Penalty-Terme oder (b) inkonsistente Zeitreihen/Preise.
 
 ---
 
@@ -89,7 +85,7 @@ Dieses Projekt bleibt bewusst bei einem **LP**:
 
 ## Projektstruktur
 
-Top-Level (laut Repository):
+Top-Level:
 - `battopt_lp/` – Python-Paket (Model, CLI, Report/Export)
 - `configs/` – Beispiel-/Template-Konfigurationen (inkl. `site_timeseries.yaml`)
 - `requirements.txt` – Python Dependencies
@@ -105,7 +101,6 @@ python -m venv .venv
 # macOS/Linux: source .venv/bin/activate
 pip install e . # oder pip install -r requirements.txt
 ```
-Diese Schritte entsprechen dem im Repo beschriebenen Setup. 
 
 Tipp: Für reproduzierbare Ergebnisse empfiehlt sich zusätzlich das Pinning von Solver-Versionen und Python-Version (z. B. via python==3.11.*).
 
@@ -128,7 +123,7 @@ Genau dieses Kommando (inkl. Parameter) ist im Repo als „Run“ dokumentiert.
 ---
 
 ## CLI: 
-battopt_lp.cli.optimize_year
+**battopt_lp.cli.optimize_year**
 
 Zweck
 
@@ -176,8 +171,6 @@ Sie enthält typischerweise:
 •	Solver-/Report-Optionen (optional)
 
 
-Bitte gleiche Feldnamen kurz mit dem Beispiel-File ab. Inhaltlich passt die folgende Struktur zu den üblichen Anforderungen dieses Problemtyps.
-
 
 ---
 
@@ -185,7 +178,7 @@ Bitte gleiche Feldnamen kurz mit dem Beispiel-File ab. Inhaltlich passt die folg
 ### 2) Zeitreihen-Format
 
 
-Empfehlung: Zeitreihen in einem der folgenden Formate:
+Zeitreihen in einem der folgenden Formate:
 
 A) Inline in YAML (nicht empfohlen)
 timeseries:
@@ -201,14 +194,16 @@ timeseries:
     export_price_chf_per_kwh: 0.07
     
 B) Externes CSV als Quelle (empfohlen)
-timeseries_csv:
-  path: "data/site_2025_timeseries.csv"
+timeseries:
+ consumption_csv: "data/filename"
+ pv_csv: "data/filename"
   datetime_col: "ts"
   columns:
     load_kw: "load_kw"
     pv_kw: "pv_kw"
     import_price: "import_price_chf_per_kwh"
     export_price: "export_price_chf_per_kwh"
+	
 Wichtig bei Jahresdaten:
 
 •	konstantes Zeitraster (z. B. 15 min)
@@ -224,12 +219,11 @@ Wichtig bei Jahresdaten:
 
 Typische Parameter:
 site:
-  timezone: "Europe/Zurich"
-  timestep_minutes: 15
 
-grid:
-  import_limit_kw: 500.0        # optional: Anschlusslimit
-  export_limit_kw: 500.0        # optional: Einspeiselimit
+•	start_datetime:  "2024-01-01T00:00:00"
+•	tz:              "Europe/Zurich"
+•	step_seconds:    900
+
 Preissignale:
 
 •	import_chf_per_kWh: Kosten für Netzbezug
@@ -509,7 +503,9 @@ Typischer Workflow:
 ```bash
 pip install -r requirements.txt #oder pip install e .
 ```
-### Gegebenenfalls fehlende packages installieren
+
+**Gegebenenfalls fehlende packages installieren**
+
 
 ### Run lokal
 ```bash
