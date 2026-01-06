@@ -465,7 +465,7 @@ Empfohlen:
 
 Typischer Workflow:
 
-### venv aktivieren
+**venv aktivieren**
 ```bash
 pip install -r requirements.txt #oder pip install e .
 ```
@@ -473,7 +473,7 @@ pip install -r requirements.txt #oder pip install e .
 **Gegebenenfalls fehlende packages installieren**
 
 
-### Run lokal
+**Run lokal**
 ```bash
 python -m battopt_lp.cli.optimize_year \
   --config configs/site_timeseries.yaml \
