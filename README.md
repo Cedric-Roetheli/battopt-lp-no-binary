@@ -13,7 +13,7 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 
 ## Inhaltsverzeichnis
 
-- [Motivation & Zielsetzung](#motivation--zielsetzung)
+- [Zielsetzung](#zielsetzung)
 - [Was bedeutet „LP ohne Binärvariablen“?](#was-bedeutet-lp-ohne-binärvariablen)
 - [Funktionsumfang](#funktionsumfang)
 - [Projektstruktur](#projektstruktur)
@@ -40,7 +40,7 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 
 ---
 
-## Motivation & Zielsetzung
+## Zielsetzung
 
 Energie-Optimierung im Gebäude-/Site-Kontext hat typischerweise mehrere (teils konkurrierende) Ziele:
 
