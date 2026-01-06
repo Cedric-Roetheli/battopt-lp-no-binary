@@ -7,7 +7,8 @@
 - **Peak Shaving** / **Demand Charges** (Reduktion von Lastspitzen)
 - **Einspeisevergütung mit Cap** (Exportvergütung begrenzt / gekappt)
 
-Das Projekt löst eine **lineare Optimierung über ein ganzes Jahr** (oder generell lange Zeitreihen) – explizit **ohne Binärvariablen**, um robust und schnell auf Standard-LP-Solvern (z. B. CBC) laufen zu können.
+Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell lange Zeitreihen) – explizit ohne Binärvariablen, um robust und schnell auf Standard-LP-Solvern (z. B. CBC) laufen zu können.
+
 ---
 
 ## Inhaltsverzeichnis
@@ -111,7 +112,7 @@ Tipp: Für reproduzierbare Ergebnisse empfiehlt sich zusätzlich das Pinning von
 
 
 
-Quickstart
+## Quickstart
 
 
 Minimaler Run mit Beispielkonfiguration:
@@ -125,7 +126,7 @@ python -m battopt_lp.cli.optimize_year \
 Genau dieses Kommando (inkl. Parameter) ist im Repo als „Run“ dokumentiert. 
 
 
-CLI: 
+## CLI: 
 battopt_lp.cli.optimize_year
 
 Zweck
@@ -135,9 +136,8 @@ Zweck
 •	Löst es mit dem angegebenen Solver
 •	Schreibt:
 
-o	--report-html … (HTML-Report)
-o	--series-csv … (Zeitreihen als CSV)
-•	
+•	--report-html … (HTML-Report)
+•	--series-csv … (Zeitreihen als CSV)	
 
 
 
@@ -148,16 +148,15 @@ Flag	Beschreibung	Beispiel
 --report-html	Output-Pfad für HTML-Report	out/report.html
 --series-csv	Output-Pfad für CSV-Zeitreihe	out/series.csv
 --solver	Solver-Backend (String)	CBC
-Quelle: README-Snippet im Repository. 
 
 
 
 
-Konfiguration (YAML)
+## Konfiguration (YAML)
 
 
 
-1) Überblick
+### 1) Überblick
 
 
 Die zentrale Konfiguration ist eine YAML-Datei (Beispiel):
@@ -180,7 +179,7 @@ Bitte gleiche Feldnamen kurz mit dem Beispiel-File ab. Inhaltlich passt die folg
 
 
 
-2) Zeitreihen-Format
+### 2) Zeitreihen-Format
 
 
 Empfehlung: Zeitreihen in einem der folgenden Formate:
@@ -217,7 +216,7 @@ Wichtig bei Jahresdaten:
 
 
 
-3) Site-/Tarif-Parameter
+### 3) Site-/Tarif-Parameter
 
 
 Typische Parameter:
@@ -237,7 +236,7 @@ Preissignale:
 
 
 
-4) Batterie-/Inverter-Parameter
+### 4) Batterie-/Inverter-Parameter
 
 battery:
   capacity_kwh: 500.0
@@ -260,7 +259,7 @@ Hinweise:
 
 
 
-5) Peak-Shaving / Demand Charge
+### 5) Peak-Shaving / Demand Charge
 
 
 Demand Charges werden als Kosten auf den maximalen Netzbezug in einem Monat modelliert.
@@ -283,7 +282,7 @@ Interpretation:
 
 
 
-6) Einspeisevergütung mit Cap (Cap auf vergütete Einspeiseleistung)
+### 6) Einspeisevergütung mit Cap (Cap auf vergütete Einspeiseleistung)
 
 
 •	Einspeisung über cap_kw wird nicht (oder geringer) vergütet.
@@ -303,7 +302,7 @@ o	export_total_kw = export_paid_kw + export_spill_kw
 
 
 
-7) Solver-Optionen
+### 7) Solver-Optionen
 
 
 Im CLI wird der Solver als String angegeben, z. B.:
@@ -320,13 +319,13 @@ Allgemeine Hinweise:
 
 
 
-Mathematisches Modell (Konzept)
+## Mathematisches Modell (Konzept)
 
 
 Das folgende ist eine konzeptuelle Beschreibung des LP-Modells. Die konkrete Implementierung kann je nach Repo-Stand leicht variieren.
 
 
-Entscheidungsvariablen
+### Entscheidungsvariablen
 
 
 Für jeden Zeitschritt t:
@@ -345,23 +344,23 @@ Optional:
 
 
 
-Nebenbedingungen
+### Nebenbedingungen
 
 
-(1) Energiebilanz (Leistung)
+#### (1) Energiebilanz (Leistung)
 Typisch:
 
 pv_kw[t] + import_kw[t] + discharge_kw[t] = load_kw[t] + export_kw[t] + charge_kw[t]
 
-(2) SOC-Dynamik
+#### (2) SOC-Dynamik
 Mit Zeitschritt Δh:
 
 soc[t+1] = soc[t] + (eta_charge * charge_kw[t] - (1/eta_discharge) * discharge_kw[t]) * Δh
 
-(3) SOC-Grenzen
+#### (3) SOC-Grenzen
 soc_min ≤ soc[t] ≤ soc_max
 
-(4) Leistungsgrenzen
+#### (4) Leistungsgrenzen
 0 ≤ charge_kw[t] ≤ max_charge_kw
 0 ≤ discharge_kw[t] ≤ max_discharge_kw
 
@@ -371,12 +370,12 @@ Optional:
 •	export_kw[t] ≤ export_limit_kw
 
 
-(5) Demand Charge Peak
+#### (5) Demand Charge Peak
 Für Periode p:
 
 peak[p] ≥ import_kw[t]  für alle t ∈ p
 
-(6) Export-Cap
+#### (6) Export-Cap
 Z. B. Leistungs-Cap:
 
 export_paid_kw[t] ≤ cap_kw
@@ -385,7 +384,7 @@ export_kw[t] = export_paid_kw[t] + export_spill_kw[t]
 
 
 
-Zielfunktion
+### Zielfunktion
 
 
 Minimiere:
@@ -400,11 +399,11 @@ Minimiere:
 
 
 
-Outputs
+### Outputs
 
 
 
-HTML-Report
+#### HTML-Report
 
 
 --report-html out/report.html erzeugt einen HTML-Report. 
@@ -418,7 +417,7 @@ Typischer Inhalt (je nach Implementierung):
 
 
 
-CSV-Zeitreihe
+#### CSV-Zeitreihe
 
 
 --series-csv out/series.csv schreibt die Zeitreihen als CSV. 
@@ -437,7 +436,7 @@ CSV-Zeitreihe
 
 
 
-Tipps zur Datenqualität
+### Tipps zur Datenqualität
 
 Orientierung an Beispieldaten
 
@@ -458,7 +457,7 @@ Orientierung an Beispieldaten
 
 
 
-Performance & Skalierung
+### Performance & Skalierung
 
 
 Ein Jahresmodell kann leicht zehntausende Zeitschritte haben. LP ist dafür gut geeignet, aber:
@@ -471,7 +470,7 @@ Ein Jahresmodell kann leicht zehntausende Zeitschritte haben. LP ist dafür gut 
 
 
 
-Reproduzierbarkeit
+### Reproduzierbarkeit
 
 
 Empfohlen:
@@ -489,18 +488,18 @@ Empfohlen:
 
 
 
-Entwicklung
+## Entwicklung
 
 
 Typischer Workflow:
 
-# venv aktivieren
+### venv aktivieren
 ```bash
 pip install -r requirements.txt #oder pip install e .
 ```
-# Gegebenenfalls fehlende packages installieren
+### Gegebenenfalls fehlende packages installieren
 
-# Run lokal
+### Run lokal
 ```bash
 python -m battopt_lp.cli.optimize_year \
   --config configs/site_timeseries.yaml \
@@ -515,7 +514,7 @@ python -m battopt_lp.cli.optimize_year \
 
 
 
-Projekt ergänzen:
+## Projekt ergänzen:
 
 1.	Fork erstellen
 2.	Feature-Branch
@@ -528,7 +527,7 @@ Projekt ergänzen:
 
 
 
-Kurzfassung (für „Ich will nur laufen lassen“)
+## Kurzfassung (für „Ich will nur laufen lassen“)
 ```bash
 python -m venv .venv
 source .venv/bin/activate
