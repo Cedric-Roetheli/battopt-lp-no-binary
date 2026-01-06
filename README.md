@@ -37,7 +37,7 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 - [Reproduzierbarkeit](#reproduzierbarkeit)
 - [eniwa_EV_LSK_tool_v4_onefile.exe](#eniwa-EV-LSK-tool-v4-onefile)
 - [Entwicklung](#entwicklung)
-- [Kurzfassung (für „Ich will nur laufen lassen“)](#Kurzfassung (für „Ich will nur laufen lassen“))
+
 ---
 
 ## Zielsetzung
