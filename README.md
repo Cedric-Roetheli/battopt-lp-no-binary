@@ -23,11 +23,8 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 - [Konfiguration (YAML)](#konfiguration-yaml)
   - [1) Überblick](#1-überblick)
   - [2) Zeitreihen-Format](#2-zeitreihen-format)
-  - [3) Site-/Tarif-Parameter](#3-sitetarif-parameter)
-  - [4) Batterie-/Inverter-Parameter](#4-batterieinverter-parameter)
-  - [5) Peak-Shaving / Demand Charge](#5-peak-shaving--demand-charge)
-  - [6) Einspeisevergütung mit Cap](#6-einspeisevergütung-mit-cap)
-  - [7) Solver-Optionen](#7-solver-optionen)
+  - [3) Beispiel](#3-Beispiel)
+  - [4) Solver-Optionen](#4-solver-optionen)
 - [Mathematisches Modell (Konzept)](#mathematisches-modell-konzept)
   - [Entscheidungsvariablen](#entscheidungsvariablen)
   - [Nebenbedingungen](#nebenbedingungen)
@@ -210,92 +207,51 @@ Wichtig bei Jahresdaten:
 ---
 
 
-### 3) Site-/Tarif-Parameter
+### 3) Beispiel
 
+```bash
+timeseries:
+  consumption_csv: data/2024_Gesamtverbrauch_HIHO_python.csv
+  pv_csv:          data/2024_PV-Produktion_HIHO_python.csv
+  step_seconds:    900
+  start_datetime:  "2024-01-01T00:00:00"
+  tz:              "Europe/Zurich"
 
-Typische Parameter:
-site:
+energy_prices:
+  import_chf_per_kWh: 0.19
+  grid_chf_per_kWh:   0.19
+  feed_in_chf_per_kWh: 0.06
 
-•	start_datetime:  "2024-01-01T00:00:00"
-•	tz:              "Europe/Zurich"
-•	step_seconds:    900
-
-Preissignale:
-
-•	import_chf_per_kWh: Kosten für Netzbezug
-•	feed_in_chf_per_kWh: Vergütung für Einspeisung
-
-
----
-
-
-### 4) Batterie-/Inverter-Parameter
-
-battery:
-  capacity_kwh: 500.0
-  soc0: 250.0
-  soc_min: 50.0
-  soc_max: 500.0
-
-  p_charge_kw: 250.0
-  p_discharge_kw: 250.0
-
-  roundtrip_eff: 0.92
-
-
-Hinweise:
-
-•	Achte auf sinnvolle soc0 (Start-SOC)
-•	Für Jahresläufe sind oft sinnvolle Endbedingungen wichtig (z. B. End-SOC ≈ Start-SOC), um „Jahresrand-Effekte“ zu vermeiden.
-
-
----
-
-
-### 5) Peak-Shaving / Demand Charge
-
-
-Demand Charges werden als Kosten auf den maximalen Netzbezug in einem Monat modelliert.
-
-Beispiel:
 demand_tariff:
   enabled: true
-  basis: monthly                # monthly / weekly / daily (je nach Tarif)
-  charge_chf_per_kW: 12.0            # CHF pro kW Peak in der Periode
-  allow_grid_charging: true         # relevant: Netzbezug (Import)
-Interpretation:
+  basis: monthly
+  charge_chf_per_kW: 12.0
+  allow_grid_charging: true
 
-•	Für jeden Abrechnungsblock wird eine Peak-Variable eingeführt:
-
-•	peak_month_m >= import_kw[t] für alle t im Monat
-
-•	Kosten: sum_m price * peak_month_m
-
-
----
-
-
-### 6) Einspeisevergütung mit Cap (Cap auf vergütete Einspeiseleistung)
-
-
-•	Einspeisung über cap_kw wird nicht (oder geringer) vergütet.
+storage:
+  simulate:
+    capacity_kwh:   64
+    p_charge_kw:    30
+    p_discharge_kw: 30
+    roundtrip_eff:  0.92
+    soc_min:        0.15
+    soc_max:        0.95
+    soc0:           0.50
 
 remuneration:
   paid_feed_in_cap_kW: 30.0
 
-LP-taugliche Modellierung:
-
-•	splitte Export in zwei Flüsse:
-
-o	export_paid_kw <= cap_kw
-o	export_spill_kw >= 0
-o	export_total_kw = export_paid_kw + export_spill_kw
-	
-
----
+economics:
+  capex_battery_chf:       32000
+  capex_installation_chf:   2000
+  opex_annual_chf:             0
+  lifetime_years:             15
+  discount_rate_pct:           2
+  subsidy_upfront_chf:         0
+```
 
 
-### 7) Solver-Optionen
+### 4) Solver-Optionen
 
 
 Im CLI wird der Solver als String angegeben, z. B.:
