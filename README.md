@@ -23,7 +23,7 @@ Das Projekt löst eine lineare Optimierung über ein ganzes Jahr (oder generell 
 - [Konfiguration (YAML)](#konfiguration-yaml)
   - [1) Überblick](#1-überblick)
   - [2) Zeitreihen-Format](#2-zeitreihen-format)
-  - [3) Beispiel](#3-Beispiel)
+  - [3) Beispiel](#3-beispiel)
   - [4) Solver-Optionen](#4-solver-optionen)
 - [Mathematisches Modell (Konzept)](#mathematisches-modell-konzept)
   - [Entscheidungsvariablen](#entscheidungsvariablen)
@@ -120,23 +120,26 @@ Genau dieses Kommando (inkl. Parameter) ist im Repo als „Run“ dokumentiert.
 
 Zweck
 
-•	Lädt eine YAML-Konfiguration mit Site-/Tarif-/Batterie-Parametern und Zeitreihen
-•	Baut das LP-Modell
-•	Löst es mit dem angegebenen Solver
-•	Schreibt:
-
-•	--report-html … (HTML-Report)
-•	--series-csv … (Zeitreihen als CSV)	
+- Lädt eine YAML-Konfiguration mit Site-/Tarif-/Batterie-Parametern und Zeitreihen
+- Baut das LP-Modell
+- Löst es mit dem angegebenen Solver
+- Schreibt:
+`--report-html` … (HTML-Report)
+`--series-csv` … (Zeitreihen als CSV)	
 
 
 
 Parameter
 
-Flag	Beschreibung	Beispiel
---config	Pfad zur YAML-Konfiguration	configs/site_timeseries.yaml
---report-html	Output-Pfad für HTML-Report	out/report.html
---series-csv	Output-Pfad für CSV-Zeitreihe	out/series.csv
---solver	Solver-Backend (String)	CBC
+
+
+`--config`	Pfad zur YAML-Konfiguration	Bsp. configs/site_timeseries.yaml
+
+`--report-html`	Output-Pfad für HTML-Report Bsp. out/report.html
+
+`--series-csv`	Output-Pfad für CSV-Zeitreihe Bsp. out/series.csv
+
+`--solver`	Solver-Backend (String) Bsp. CBC
 
 
 ---
@@ -151,17 +154,17 @@ Flag	Beschreibung	Beispiel
 
 Die zentrale Konfiguration ist eine YAML-Datei (Beispiel):
 
-•	configs/site_timeseries.yaml  
+- configs/site_timeseries.yaml  
 
 
 Sie enthält typischerweise:
 
-•	Metadaten (Zeitzone, Zeitschritt)
-•	Zeitreihen (Load, PV, Preise, ggf. Exportpreise)
-•	Batterie- und Netzparameter
-•	Demand-Charge-/Peak-Shaving-Settings
-•	Exportvergütung inkl. Cap
-•	Solver-/Report-Optionen (optional)
+- Metadaten (Zeitzone, Zeitschritt)
+- Zeitreihen (Load, PV, Preise, ggf. Exportpreise)
+- Batterie- und Netzparameter
+- Demand-Charge-/Peak-Shaving-Settings
+- Exportvergütung inkl. Cap
+- Solver-/Report-Optionen (optional)
 
 
 
@@ -174,34 +177,41 @@ Sie enthält typischerweise:
 Zeitreihen in einem der folgenden Formate:
 
 A) Inline in YAML (nicht empfohlen)
-timeseries:
-  - ts: "2025-01-01T00:00:00+01:00"
-    load_kw: 120.0
-    pv_kw: 0.0
-    import_price_chf_per_kwh: 0.18
-    export_price_chf_per_kwh: 0.07
-  - ts: "2025-01-01T00:15:00+01:00"
-    load_kw: 110.0
-    pv_kw: 0.0
-    import_price_chf_per_kwh: 0.18
-    export_price_chf_per_kwh: 0.07
+
+		timeseries:
+		
+			ts: "2025-01-01T00:00:00+01:00"
+    		load_kw: 120.0
+    		pv_kw: 0.0
+    		import_price_chf_per_kwh: 0.18
+    		export_price_chf_per_kwh: 0.07
+
+			
+			ts: "2025-01-01T00:15:00+01:00"
+			load_kw: 110.0
+    		pv_kw: 0.0
+    		import_price_chf_per_kwh: 0.18
+    		export_price_chf_per_kwh: 0.07
+			
     
 B) Externes CSV als Quelle (empfohlen)
-timeseries:
- consumption_csv: "data/filename"
- pv_csv: "data/filename"
-  datetime_col: "ts"
-  columns:
-    load_kw: "load_kw"
-    pv_kw: "pv_kw"
-    import_price: "import_price_chf_per_kwh"
-    export_price: "export_price_chf_per_kwh"
+
+		timeseries:
+ 			consumption_csv: "data/filename"
+ 			pv_csv: "data/filename"
+  			datetime_col: "ts"
+			
+  		columns:
+    		load_kw: "load_kw"
+    		pv_kw: "pv_kw"
+    		import_price: "import_price_chf_per_kwh"
+    		export_price: "export_price_chf_per_kwh"
 	
 Wichtig bei Jahresdaten:
 
-•	konstantes Zeitraster (z. B. 15 min)
-•	keine Lücken / Duplikate
-•	konsistente Zeitzone (DST sauber behandelt)
+- konstantes Zeitraster (z. B. 15 min)
+- keine Lücken / Duplikate
+- konsistente Zeitzone (DST sauber behandelt)
 
 
 ---
@@ -254,15 +264,16 @@ economics:
 ### 4) Solver-Optionen
 
 
-Im CLI wird der Solver als String angegeben, z. B.:
---solver CBC
+Im CLI wird der Solver als String angegeben, 
+
+z. B.: `--solver CBC`
 
 
 Allgemeine Hinweise:
 
-•	CBC: gute Default-Wahl, frei verfügbar
-• HiGHS: kann deutlich schneller sein (empfohlen)
-• GLPK: Fallback
+- CBC: gute Default-Wahl, frei verfügbar
+- HiGHS: kann deutlich schneller sein (empfohlen)
+- GLPK: Fallback
 
 
 ---
@@ -282,17 +293,17 @@ Das folgende ist eine konzeptuelle Beschreibung des LP-Modells. Die konkrete Imp
 
 Für jeden Zeitschritt t:
 
-•	import_kw[t] ≥ 0  (Netzbezug)
-•	export_kw[t] ≥ 0  (Netzeinspeisung)
-•	charge_kw[t] ≥ 0  (Batterie laden)
-•	discharge_kw[t] ≥ 0 (Batterie entladen)
-•	soc_kwh[t] (State of Charge)
+- `import_kw[t]` ≥ 0  (Netzbezug)
+- `export_kw[t]` ≥ 0  (Netzeinspeisung)
+- `charge_kw[t]` ≥ 0  (Batterie laden)
+- `discharge_kw[t]` ≥ 0 (Batterie entladen)
+- `soc_kwh[t]` (State of Charge)
 
 
 Optional:
 
-•	export_paid_kw[t], export_spill_kw[t] (für Cap)
-•	peak_p je Periode p (Demand Charge Peak)
+- `export_paid_kw[t]`, `export_spill_kw[t]` (für Cap)
+- `peak_p` je Periode p (Demand Charge Peak)
 
 ---
 
@@ -302,36 +313,38 @@ Optional:
 #### (1) Energiebilanz (Leistung)
 Typisch:
 
-pv_kw[t] + import_kw[t] + discharge_kw[t] = load_kw[t] + export_kw[t] + charge_kw[t]
+`pv_kw[t]` + `import_kw[t]` + `discharge_kw[t]` = `load_kw[t]` + `export_kw[t]` + `charge_kw[t]`
 
 #### (2) SOC-Dynamik
 Mit Zeitschritt Δh:
 
-soc[t+1] = soc[t] + (eta_charge * charge_kw[t] - (1/eta_discharge) * discharge_kw[t]) * Δh
+`soc[t+1]` = `soc[t]` + (`eta_charge` * `charge_kw[t]` - (1/`eta_discharge`) * `discharge_kw[t])` * `Δh`
 
 #### (3) SOC-Grenzen
-soc_min ≤ soc[t] ≤ soc_max
+`soc_min` ≤ `soc[t]` ≤ `soc_max`
 
 #### (4) Leistungsgrenzen
-0 ≤ charge_kw[t] ≤ max_charge_kw
-0 ≤ discharge_kw[t] ≤ max_discharge_kw
+0 ≤ `charge_kw[t]` ≤ `max_charge_kw`
+
+0 ≤ `discharge_kw[t]` ≤ `max_discharge_kw`
 
 Optional:
 
-•	import_kw[t] ≤ import_limit_kw
-•	export_kw[t] ≤ export_limit_kw
+- `import_kw[t]` ≤ `import_limit_kw`
+- `export_kw[t]` ≤ `export_limit_kw`
 
 
 #### (5) Demand Charge Peak
 Für Periode p:
 
-peak[p] ≥ import_kw[t]  für alle t ∈ p
+`peak[p]` ≥ `import_kw[t]`  für alle t ∈ p
 
 #### (6) Export-Cap
 Z. B. Leistungs-Cap:
 
-export_paid_kw[t] ≤ cap_kw
-export_kw[t] = export_paid_kw[t] + export_spill_kw[t]
+`export_paid_kw[t]` ≤ `cap_kw`
+
+`export_kw[t]` = `export_paid_kw[t]` + `export_spill_kw[t]`
 
 
 ---
@@ -342,10 +355,10 @@ export_kw[t] = export_paid_kw[t] + export_spill_kw[t]
 
 Minimiere:
 
-•	Energiebezugskosten: Σ_t import_kw[t] * import_price[t] * Δh
-•	minus Einspeiseerlöse: - Σ_t export_paid_kw[t] * export_price[t] * Δh
-•	plus Demand Charges: Σ_p peak[p] * dc_price[p]
-•	plus optionale Regularisierung: Σ_t (charge_kw[t] + discharge_kw[t]) * throughput_penalty * Δh
+- Energiebezugskosten: Σ_t `import_kw[t]` * `import_price[t]` * `Δh`
+- minus Einspeiseerlöse: - Σ_t `export_paid_kw[t]` * `export_price[t]` * `Δh`
+- plus Demand Charges: Σ_p `peak[p]` * `dc_price[p]`
+- plus optionale Regularisierung: Σ_t (`charge_kw[t]` + `discharge_kw[t]`) * `throughput_penalty` * `Δh`
 
 
 
@@ -359,14 +372,14 @@ Minimiere:
 #### HTML-Report
 
 
---report-html out/report.html erzeugt einen HTML-Report. 
+`--report-html` out/report.html erzeugt einen HTML-Report. 
 
 Typischer Inhalt (je nach Implementierung):
 
-•	Kennzahlen: Importkosten, Exporterlöse, Demand Charges, Gesamt
-•	Peak-Vergleich: vorher/nachher
-•	Plot/Tabellen: SOC, Import/Export, Charge/Discharge
-•	ggf. Monats-/Quartalsaggregation
+- Kennzahlen: Importkosten, Exporterlöse, Demand Charges, Gesamt
+- Peak-Vergleich: vorher/nachher
+- Plot/Tabellen: SOC, Import/Export, Charge/Discharge
+- ggf. Monats-/Quartalsaggregation
 
 
 ---
@@ -375,17 +388,17 @@ Typischer Inhalt (je nach Implementierung):
 #### CSV-Zeitreihe
 
 
---series-csv out/series.csv schreibt die Zeitreihen als CSV. 
+`--series-csv` out/series.csv schreibt die Zeitreihen als CSV. 
 
 Übliche Spalten:
 
-•	timestamp
-•	load_kw, pv_kw
-•	import_kw, export_kw
-•	charge_kw, discharge_kw
-•	soc_kwh
-•	ggf. export_paid_kw/export_spill_kw
-•	ggf. period_peak / peak_binding (modellabhängig)
+- timestamp
+- load_kw, pv_kw
+- import_kw, export_kw
+- charge_kw, discharge_kw
+- soc_kwh
+- ggf. export_paid_kw/export_spill_kw
+- ggf. period_peak / peak_binding (modellabhängig)
 
 
 ---
@@ -418,9 +431,9 @@ Orientierung an Beispieldaten
 
 Ein Jahresmodell kann leicht zehntausende Zeitschritte haben. LP ist dafür gut geeignet, aber:
 
-•	Achte auf effizientes I/O (CSV statt Inline-YAML für große Zeitreihen)
-•	Bei 15-min Raster: 35’040 Schritte/Jahr
-•	Solverwahl kann Unterschied machen
+- Achte auf effizientes I/O (CSV statt Inline-YAML für große Zeitreihen)
+- Bei 15-min Raster: 35’040 Schritte/Jahr
+- Solverwahl kann Unterschied machen
 
 
 
@@ -433,10 +446,10 @@ Ein Jahresmodell kann leicht zehntausende Zeitschritte haben. LP ist dafür gut 
 
 Empfohlen:
 
-•	Python-Version fixieren
-•	Dependencies pinnen (z. B. requirements.lock)
-•	Solver-Version dokumentieren
-•	Konfiguration + Input-Zeitreihe versionieren
+- Python-Version fixieren
+- Dependencies pinnen (z. B. requirements.lock)
+- Solver-Version dokumentieren
+- Konfiguration + Input-Zeitreihe versionieren
 
 
 
