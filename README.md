@@ -109,7 +109,7 @@ Diese Schritte entsprechen dem im Repo beschriebenen Setup.
 
 Tipp: Für reproduzierbare Ergebnisse empfiehlt sich zusätzlich das Pinning von Solver-Versionen und Python-Version (z. B. via python==3.11.*).
 
-
+---
 
 
 ## Quickstart
@@ -125,6 +125,7 @@ python -m battopt_lp.cli.optimize_year \
 ```
 Genau dieses Kommando (inkl. Parameter) ist im Repo als „Run“ dokumentiert. 
 
+---
 
 ## CLI: 
 battopt_lp.cli.optimize_year
@@ -150,6 +151,7 @@ Flag	Beschreibung	Beispiel
 --solver	Solver-Backend (String)	CBC
 
 
+---
 
 
 ## Konfiguration (YAML)
@@ -177,6 +179,7 @@ Sie enthält typischerweise:
 Bitte gleiche Feldnamen kurz mit dem Beispiel-File ab. Inhaltlich passt die folgende Struktur zu den üblichen Anforderungen dieses Problemtyps.
 
 
+---
 
 
 ### 2) Zeitreihen-Format
@@ -213,7 +216,7 @@ Wichtig bei Jahresdaten:
 •	konsistente Zeitzone (DST sauber behandelt)
 
 
-
+---
 
 
 ### 3) Site-/Tarif-Parameter
@@ -233,7 +236,7 @@ Preissignale:
 •	feed_in_chf_per_kWh: Vergütung für Einspeisung
 
 
-
+---
 
 
 ### 4) Batterie-/Inverter-Parameter
@@ -256,7 +259,7 @@ Hinweise:
 •	Für Jahresläufe sind oft sinnvolle Endbedingungen wichtig (z. B. End-SOC ≈ Start-SOC), um „Jahresrand-Effekte“ zu vermeiden.
 
 
-
+---
 
 
 ### 5) Peak-Shaving / Demand Charge
@@ -279,7 +282,7 @@ Interpretation:
 •	Kosten: sum_m price * peak_month_m
 
 
-
+---
 
 
 ### 6) Einspeisevergütung mit Cap (Cap auf vergütete Einspeiseleistung)
@@ -299,7 +302,7 @@ o	export_spill_kw >= 0
 o	export_total_kw = export_paid_kw + export_spill_kw
 	
 
-
+---
 
 
 ### 7) Solver-Optionen
@@ -316,13 +319,16 @@ Allgemeine Hinweise:
 • GLPK: Fallback
 
 
-
+---
 
 
 ## Mathematisches Modell (Konzept)
 
 
 Das folgende ist eine konzeptuelle Beschreibung des LP-Modells. Die konkrete Implementierung kann je nach Repo-Stand leicht variieren.
+
+
+---
 
 
 ### Entscheidungsvariablen
@@ -342,7 +348,7 @@ Optional:
 •	export_paid_kw[t], export_spill_kw[t] (für Cap)
 •	peak_p je Periode p (Demand Charge Peak)
 
-
+---
 
 ### Nebenbedingungen
 
@@ -382,6 +388,7 @@ export_paid_kw[t] ≤ cap_kw
 export_kw[t] = export_paid_kw[t] + export_spill_kw[t]
 
 
+---
 
 
 ### Zielfunktion
@@ -396,7 +403,7 @@ Minimiere:
 
 
 
-
+---
 
 
 ### Outputs
@@ -416,6 +423,8 @@ Typischer Inhalt (je nach Implementierung):
 •	ggf. Monats-/Quartalsaggregation
 
 
+---
+
 
 #### CSV-Zeitreihe
 
@@ -433,7 +442,7 @@ Typischer Inhalt (je nach Implementierung):
 •	ggf. period_peak / peak_binding (modellabhängig)
 
 
-
+---
 
 
 ### Tipps zur Datenqualität
@@ -454,6 +463,7 @@ Orientierung an Beispieldaten
 
 
 
+---
 
 
 
@@ -467,6 +477,8 @@ Ein Jahresmodell kann leicht zehntausende Zeitschritte haben. LP ist dafür gut 
 •	Solverwahl kann Unterschied machen
 
 
+
+---
 
 
 
@@ -483,7 +495,7 @@ Empfohlen:
 
 
 
-
+---
 
 
 
@@ -510,7 +522,7 @@ python -m battopt_lp.cli.optimize_year \
  
 
 
-
+---
 
 
 
@@ -523,7 +535,7 @@ python -m battopt_lp.cli.optimize_year \
 
 
 
-
+---
 
 
 
